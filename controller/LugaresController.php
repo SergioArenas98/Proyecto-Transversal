@@ -228,6 +228,7 @@ class LugaresController
             $stmt = $this->conn->prepare("DELETE FROM Lugar WHERE nombre=?");
             $stmt->bindParam(1, $placeName);
             $stmt->execute();
+            $_SESSION["message"] = "Place deleted successfully!";
             header("Location: ../view/mainPage.php");
             exit();
         } catch (PDOException $e) {

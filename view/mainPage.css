@@ -145,6 +145,7 @@ search-box button {
 #box2 {
     background-color: rgb(156, 115, 115);
     height: auto;
+    min-height: 1000px;
     display: inline-block;
     text-align: center;
     border-width: 2px;
