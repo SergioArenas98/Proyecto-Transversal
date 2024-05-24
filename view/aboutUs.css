@@ -1,0 +1,189 @@
+*{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+/* -------HEADER------- */
+#div-header {
+    padding-top: 5px;
+    display: flex;
+    padding-bottom: 5px;
+    border-bottom-style: solid;
+    border-color: black;
+    border-width: 2px;
+    background-color: lightgrey;
+}
+
+#img-logo {
+    width: 70px;
+}
+
+#div-img-logo {
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+#div-project-name {
+    width: 14%;
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 6px;
+}
+
+#project-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 25px;
+    text-align: justify;
+    padding-left: 30px;
+}
+
+#div-header-menu {
+    width: 100%;
+    text-align: right;
+}
+
+#div-reference-middle {
+    vertical-align: middle;
+    width: 0%;
+    height: 100%;
+    display: inline-block;
+}
+
+.div-menu {
+    width: 10%;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.header-menu {
+    text-decoration: none;
+    color: black;
+    font-size: 17px;
+}
+
+/* -------BODY------- */
+.p1 {
+    font-weight: bold;
+    margin-right: 65%;
+}
+
+.head {
+    background-color: rgb(215, 176, 176);
+    vertical-align: middle;
+    text-align: center;
+}
+
+#title {
+    display: inline-block;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: 40px;
+}
+
+#main-place-img {
+    height: 500px;
+    width: 100%;
+    border: solid black;
+}
+
+#div-grid {
+    display: grid;
+    grid-template-columns: 33% 33% 34%;
+    grid-template-rows: 400px 400px 400px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#grid1-left {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    padding-top: 50px;
+}
+
+#grid2-left {
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    padding-top: 50px;
+}
+
+#grid3-left {
+    grid-row: 3 / 4;
+    grid-column: 1 / 2;
+    padding-top: 50px;
+}
+
+#grid1-right {
+    grid-row: 1 / 2;
+    grid-column: 2 / 4;
+}
+
+#grid2-right {
+    grid-row: 2 / 3;
+    grid-column: 2 / 4;
+}
+
+#grid3-right {
+    grid-row: 3 / 4;
+    grid-column: 2 / 4;
+}
+
+#person-img {
+    height: 70%;
+}
+
+.about-us {
+    padding: 50px;
+    text-align: justify;
+    line-height: 35px;
+}
+
+
+/* -------FOOTER------- */
+#footer {
+    height: 150px;
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    background-color: lightgrey;
+    border-top-style: solid;
+    border-color: black;
+    border-width: 2px;
+}
+
+#div-stores {
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    padding-top: 20px;
+}
+
+#apple {
+    width: 150px;
+    height: 50px;
+    text-align: left;
+    padding-right: 200px;
+}
+
+#android {
+    width: 150px;
+    height: 50px;
+    padding-right: 200px;
+}
+
+#microsoft {
+    width: 150px;
+    height: 50px;
+}
+
+#container {
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+#copyright {
+    text-align: center;
+}
