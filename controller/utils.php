@@ -1,22 +1,22 @@
 <?php
 
-session_start();
-
 class ImageUploader
 {
-    public function imgUpload(): ? string
+    public function imgUpload($fileName): ? string
     {
-        $img = $_FILES['imagen'];
-        $uploadDirectory = "../view/img/";
-        $imgFileName = uniqid() . '_' . basename($img['name']);
-        $imgFilePath = $uploadDirectory . $imgFileName;
+        if (!empty($_FILES[$fileName]['tmp_name'])) {
+            $file = $_FILES[$fileName];
+            $uploadDirectory = "../view/img/";
+            $fileName = $file['name'];
+            $filePath = $uploadDirectory . $fileName;
 
-        if (move_uploaded_file($img['tmp_name'], $imgFilePath)) {
-            return $imgFilePath;
-        } else {
-            $_SESSION["error"] = "Error uploading image. Please try again.";
-            header("Location: ../view/updateInfoProfile.php");
-            exit();
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                return $filePath;
+
+            } else {
+                $_SESSION["error"] = "Error uploading image. Please try again.";
+                return null;
+            }
         }
     }
 }

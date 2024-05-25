@@ -14,6 +14,8 @@ if (isset($_SESSION['error'])) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="updateInfoProfile.css">
+  <script src="../view/jquery-3.7.1.min.js"></script>
+  <script src="../view/updateInfoProfile.js" defer></script>
   <title>Update Information Profile</title>
 </head>
 
@@ -81,6 +83,7 @@ if (isset($_SESSION['error'])) {
             <input type="file" id="imagen" name="imagen" accept="image/*"><br><br>
           <?php endif; ?>
 
+          <button type="button" name="update-profile-ajax" id="update-profile-ajax">Update Ajax</button>
           <button type="submit" name="save-info" id="save-info">Save</button>
           <button type="submit" name="close-info" id="close-info">Close</button><br><br>
         </form>

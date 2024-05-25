@@ -240,6 +240,7 @@ class LugaresController
     public function updatePlace(): void
     {
         require_once "../controller/utils.php";
+        $imageUploader = new ImageUploader();
 
         $placeName = $_SESSION["name"];
 
@@ -281,9 +282,7 @@ class LugaresController
                 $_SESSION['descripcion'] = $currentData['descripcion'];
             }
             if (!empty($_FILES['imagen']['tmp_name'])) {
-                $imageUploader = new ImageUploader();
-                $imgFilePath = $imageUploader->imgUpload();
-                $_SESSION['imagen'] = $imgFilePath;
+                $_SESSION['imagen'] = $imageUploader->imgUpload('imagen');
             } else {
                 $_SESSION['imagen'] = $currentData['imagen'];
             }
@@ -303,23 +302,17 @@ class LugaresController
                 $_SESSION['link3'] = $currentData['link3'];
             }
             if (!empty($_FILES['imagen_secundaria1']['tmp_name'])) {
-                $imageUploader = new ImageUploader();
-                $imgFilePath = $imageUploader->imgUpload();
-                $_SESSION['imagen_secundaria1'] = $imgFilePath;
+                $_SESSION['imagen_secundaria1'] = $imageUploader->imgUpload('imagen_secundaria1');
             } else {
                 $_SESSION['imagen_secundaria1'] = $currentData['imagen_secundaria1'];
             }
             if (!empty($_FILES['imagen_secundaria2']['tmp_name'])) {
-                $imageUploader = new ImageUploader();
-                $imgFilePath = $imageUploader->imgUpload();
-                $_SESSION['imagen_secundaria2'] = $imgFilePath;
+                $_SESSION['imagen_secundaria1'] = $imageUploader->imgUpload('imagen_secundaria2');
             } else {
                 $_SESSION['imagen_secundaria2'] = $currentData['imagen_secundaria2'];
             }
             if (!empty($_FILES['imagen_secundaria3']['tmp_name'])) {
-                $imageUploader = new ImageUploader();
-                $imgFilePath = $imageUploader->imgUpload();
-                $_SESSION['imagen_secundaria3'] = $imgFilePath;
+                $_SESSION['imagen_secundaria1'] = $imageUploader->imgUpload('imagen_secundaria3');
             } else {
                 $_SESSION['imagen_secundaria3'] = $currentData['imagen_secundaria3'];
             }
@@ -368,75 +361,66 @@ class LugaresController
 
     public function updatePlaceAjax(): void
     {
+        require_once "../controller/utils.php";
+        $imageUploader = new ImageUploader();
+
         // Obtener los datos enviados a través de POST
-        $_SESSION['$nombre'] = $_POST['nombre'];
-        $_SESSION['$localizacion'] = $_POST['localizacion'];
-        $_SESSION['$tipologia'] = $_POST['tipologia'];
-        $_SESSION['$periodo'] = $_POST['periodo'];
-        $_SESSION['$subperiodo'] = $_POST['subperiodo'];
-        $_SESSION['$descripcion'] = $_POST['descripcion'];
-        $_SESSION['$link1'] = $_POST['link1'];
-        $_SESSION['$link2'] = $_POST['link2'];
-        $_SESSION['$link3'] = $_POST['link3'];
-        $_SESSION['$video1'] = $_POST['video1'];
-        $_SESSION['$video2'] = $_POST['video2'];
-        /*
-        $_SESSION['imagen'] = $_POST['imagen'];
-        $_SESSION['imagen_secundaria1'] = $_POST['imagen_secundaria1'];
-        $_SESSION['imagen_secundaria2'] = $_POST['imagen_secundaria2'];
-        $_SESSION['imagen_secundaria3'] = $_POST['imagen_secundaria3'];*/
-
-        // Inicializar variables de imagen
-        $imagen = null;
-        $imagen_secundaria1 = null;
-        $imagen_secundaria2 = null;
-        $imagen_secundaria3 = null;
-
-        // Procesar cada archivo subido
-        if (!empty($_FILES['imagen']['tmp_name'])) {
-            $imageUploader = new ImageUploader();
-            $imgFilePath = $imageUploader->imgUpload();
-            $_SESSION['imagen'] = $imgFilePath;
-        }
-        if (!empty($_FILES['imagen_secundaria1']['tmp_name'])) {
-            $imageUploader = new ImageUploader();
-            $imgFilePath = $imageUploader->imgUpload();
-            $_SESSION['imagen_secundaria1'] = $imgFilePath;
-        }
-        if (!empty($_FILES['imagen_secundaria2']['tmp_name'])) {
-            $imageUploader = new ImageUploader();
-            $imgFilePath = $imageUploader->imgUpload();
-            $_SESSION['imagen_secundaria2'] = $imgFilePath;
-        }
-        if (!empty($_FILES['imagen_secundaria3']['tmp_name'])) {
-            $imageUploader = new ImageUploader();
-            $imgFilePath = $imageUploader->imgUpload();
-            $_SESSION['imagen_secundaria3'] = $imgFilePath;
-        }
+        $nombre = $_POST['nombre'];
+        $localizacion = $_POST['localizacion'];
+        $tipologia = $_POST['tipologia'];
+        $periodo = $_POST['periodo'];
+        $subperiodo = $_POST['subperiodo'];
+        $descripcion = $_POST['descripcion'];
+        $link1 = $_POST['link1'];
+        $link2 = $_POST['link2'];
+        $link3 = $_POST['link3'];
+        $video1 = $_POST['video1'];
+        $video2 = $_POST['video2'];
+        $imagen = $imageUploader->imgUpload('imagen');
+        $imagen_secundaria1 = $imageUploader->imgUpload('imagen_secundaria1');
+        $imagen_secundaria2 = $imageUploader->imgUpload('imagen_secundaria2');
+        $imagen_secundaria3 = $imageUploader->imgUpload('imagen_secundaria3');
 
         // Preparar la consulta SQL para actualizar los datos
-        $stmt = $this->conn->prepare("UPDATE Lugar SET localizacion = ?, tipologia = ?, periodo = ?, subperiodo = ?, descripcion = ?, link1 = ?, 
+        $stmt = $this->conn->prepare("UPDATE Lugar SET nombre = ?, localizacion = ?, tipologia = ?, periodo = ?, subperiodo = ?, descripcion = ?, link1 = ?, 
                 link2 = ?, link3 = ?, video1 = ?, video2 = ?, imagen = ?, imagen_secundaria1 = ?, imagen_secundaria2 = ?, imagen_secundaria3 = ? WHERE nombre = ?");
-        $stmt->bindParam(1, $_SESSION['$localizacion']);
-        $stmt->bindParam(2, $_SESSION['$tipologia']);
-        $stmt->bindParam(3, $_SESSION['$periodo']);
-        $stmt->bindParam(4, $_SESSION['$subperiodo']);
-        $stmt->bindParam(5, $_SESSION['$descripcion']);
-        $stmt->bindParam(6, $_SESSION['$link1']);
-        $stmt->bindParam(7, $_SESSION['$link2']);
-        $stmt->bindParam(8, $_SESSION['$link3']);
-        $stmt->bindParam(9, $_SESSION['$video1']);
-        $stmt->bindParam(10, $_SESSION['$video2']);
-        $stmt->bindParam(11, $_SESSION['imagen']);
-        $stmt->bindParam(12, $_SESSION['imagen_secundaria1']);
-        $stmt->bindParam(13, $_SESSION['imagen_secundaria2']);
-        $stmt->bindParam(14, $_SESSION['imagen_secundaria3']);
-        $stmt->bindParam(15, $_SESSION['$nombre']);
-
+        $stmt->bindParam(1, $nombre);
+        $stmt->bindParam(2, $localizacion);
+        $stmt->bindParam(3, $tipologia);
+        $stmt->bindParam(4, $periodo);
+        $stmt->bindParam(5, $subperiodo);
+        $stmt->bindParam(6, $descripcion);
+        $stmt->bindParam(7, $link1);
+        $stmt->bindParam(8, $link2);
+        $stmt->bindParam(9, $link3);
+        $stmt->bindParam(10, $video1);
+        $stmt->bindParam(11, $video2);
+        $stmt->bindParam(12, $imagen);
+        $stmt->bindParam(13, $imagen_secundaria1);
+        $stmt->bindParam(14, $imagen_secundaria2);
+        $stmt->bindParam(15, $imagen_secundaria3);
+        $stmt->bindParam(16, $_SESSION['name']);
+    
         // Ejecutar la consulta y verificar si se realizó alguna actualización
         $stmt->execute();
+        
         if ($stmt->rowCount() > 0) {
             echo json_encode(['success' => true, 'message' => 'Datos actualizados correctamente.']);
+            $_SESSION['nombre'] = $nombre;
+            $_SESSION['localizacion'] = $localizacion;
+            $_SESSION['tipologia'] = $tipologia;
+            $_SESSION['periodo'] = $periodo;
+            $_SESSION['subperiodo'] = $subperiodo;
+            $_SESSION['descripcion'] = $descripcion;
+            $_SESSION['link1'] = $link1;
+            $_SESSION['link2'] = $link2;
+            $_SESSION['link3'] = $link3;
+            $_SESSION['video1'] = $video1;
+            $_SESSION['video2'] = $video2;
+            $_SESSION['imagen'] = $imagen;
+            $_SESSION['imagen_secundaria1'] = $imagen_secundaria1;
+            $_SESSION['imagen_secundaria2'] = $imagen_secundaria2;
+            $_SESSION['imagen_secundaria3'] = $imagen_secundaria3;
         } else {
             echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
         }
