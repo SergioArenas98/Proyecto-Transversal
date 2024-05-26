@@ -1,33 +1,33 @@
 $(document).ready(function () {
     $("#update-profile-ajax").click(function () {
-        // Validar que todos los campos estén llenos
+        // Validate that all fields are filled
         var isValid = true;
         var requiredFields = ["userName", "ape1", "ape2", "password", "email", "tarjeta_credito"];
         requiredFields.forEach(function (field) {
             if (document.getElementById(field).value === "") {
                 isValid = false;
-                alert("El campo " + field + " es obligatorio.");
-                return false; // Salir del bucle forEach
+                alert("Field " + field + " is required.");
+                // Exit the loop
+                return false;
             }
         });
 
-        // Validar el formato del email
+        // Validate email format
         var email = document.getElementById("email").value;
         var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailPattern.test(email)) {
             isValid = false;
-            alert("El formato del email es incorrecto.");
+            alert("Invalid email format.");
         }
 
-        // Si no es válido, no enviar la solicitud
+        // If not valid, don't send the request
         if (!isValid) {
             return;
         }
 
-        // Create a FormData object
         var formData = new FormData();
 
-        // Get other data and append to FormData
+        // Get data and append to FormData
         formData.append("updatePlaceAjax", "true");
         formData.append("userName", document.getElementById("userName").value);
         formData.append("ape1", document.getElementById("ape1").value);
@@ -38,22 +38,21 @@ $(document).ready(function () {
 
         var imagen = document.getElementById("imagen");
 
-        // Verificar si el elemento imagen existe
+        // Check if the image exists
         if (imagen) {
-            // Verificar si se ha seleccionado un archivo
+            // Check if a file has been selected
             if (imagen.files.length > 0) {
-                // Si se ha seleccionado un archivo, obtener el primer archivo
+                // If a file has been selected, get the first file
                 var imagenFile = imagen.files[0];
                 formData.append("imagen", imagenFile);
             } else {
-                // Si no se ha seleccionado un archivo, dejar la variable "imagen" vacía
+                // If no file has been selected, leave variable empty
                 formData.append("imagen", "");
             }
         } else {
-            // Si el elemento imagen no existe, dejar la variable "imagen" vacía
+            // If the image element does not exist, leave variable empty
             formData.append("imagen", "");
         }
-        
 
         // Send data to PHP
         $.ajax({
@@ -64,9 +63,11 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 var parsedData = JSON.parse(response);
+                // If update is successful
                 if (parsedData.success) {
                     alert(parsedData.message);
                     window.location.href = 'profile.php';
+                // If update is unsuccessful
                 } else {
                     alert("Error: " + parsedData.message);
                     window.location.href = 'updateInfoProfile.php';

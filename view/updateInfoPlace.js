@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#update-info-ajax").click(function () {
-        // Validar que todos los campos estén llenos
+        // Validate that all fields are filled
         var isValid = true;
         var requiredFields = ["name", "localizacion", "tipologia", "periodo", "subperiodo", "descripcion", "link1", "link2", "link3", "video1", "video2"];
         requiredFields.forEach(function (field) {
@@ -11,7 +11,7 @@ $(document).ready(function () {
             }
         });
 
-        // Validar que las imágenes se hayan seleccionado
+        // Validate that all images are selected
         var imagen = document.getElementById("imagen").files[0];
         var imagen_secundaria1 = document.getElementById("imagen_secundaria1").files[0];
         var imagen_secundaria2 = document.getElementById("imagen_secundaria2").files[0];
@@ -22,15 +22,14 @@ $(document).ready(function () {
             alert("Debe seleccionar todas las imágenes.");
         }
 
-        // Si no es válido, no enviar la solicitud
+        // If not valid, don't send the request
         if (!isValid) {
             return;
         }
 
-        // Create a FormData object
         var formData = new FormData();
 
-        // Get other data and append to FormData
+        // Get data and append to FormData
         formData.append("updatePlaceAjax", "true");
         formData.append("nombre", document.getElementById("name").value);
         formData.append("localizacion", document.getElementById("localizacion").value);

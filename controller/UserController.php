@@ -3,6 +3,7 @@ session_start();
 
 $user = new UserController();
 
+// POST requests
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["login"])) {
         $user->login();
@@ -40,8 +41,10 @@ class UserController
 {
     public $conn;
 
+    // Constructor to initialize the database connection
     public function __construct()
     {
+        // Set database parameters
         $servername = "localhost";
         $username = "root";
         $password = "Sergio14Sejuma18";
@@ -50,16 +53,16 @@ class UserController
         try {
             $this->conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //echo "Connected successfully";
         } catch (PDOException $e) {
-            //echo "Connection failed: " . $e->getMessage();
         }
     }
 
+    // Method to delete a user from the database
     public function deleteUser(): void
     {
         $username = $_SESSION["user"];
 
+        // Set statement
         try {
             $stmt = $this->conn->prepare("DELETE FROM Usuario WHERE nombre=?");
             $stmt->bindParam(1, $username);
@@ -72,24 +75,29 @@ class UserController
         }
     }
 
+    // Method to log out a user
     public function logout(): void
     {
+        // Unset session variables
         unset($_SESSION["logged"]);
         unset($_SESSION["user"]);
-
+        
+        // Destroy the session and redirect to mainPage
         session_destroy();
-
         header("Location: ../view/mainPage.php");
     }
 
+    // Method to log in a user
     public function login(): void
     {
+        // Set statement
         $stmt = $this->conn->prepare("SELECT id_usuario, nombre, contraseña, imagen, tipo_usuario FROM Usuario WHERE nombre=?");
         $stmt->bindParam(1, $_POST["name_login"]);
         $stmt->execute();
     
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
+        // If statement successful, save data in session
         if ($result) {
             if (password_verify($_POST["password_login"], $result['contraseña'])) {
                 $_SESSION["logged"] = true;
@@ -101,6 +109,7 @@ class UserController
     
                 $this->conn = null;
     
+                // Redirect user
                 $_SESSION["message"] = "Login successful!";
                 header("Location: ../view/profile.php");
                 exit();
@@ -112,6 +121,7 @@ class UserController
                 header("Location: ../view/loginRegister.php");
                 exit();
             }
+        // If statement unsuccessful, refresh page
         } else {
             $_SESSION["logged"] = false;
             $_SESSION["error"] = "Invalid username.";
@@ -122,16 +132,19 @@ class UserController
         }
     }
 
+    // Method to read user information
     public function read(): void
     {
         $username = $_SESSION["id_user"];
 
+        // Set statement
         $stmt = $this->conn->prepare("SELECT nombre, apellido1, apellido2, contraseña, email, tarjeta_credito, imagen, tipo_usuario FROM Usuario WHERE id_usuario=?");
         $stmt->bindParam(1, $username);
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // If statement successful, save data in session
         if ($result) {
             $_SESSION["user"] = $result['nombre'];
             $_SESSION["ape1"] = $result['apellido1'];
@@ -145,13 +158,14 @@ class UserController
             $this->conn = null;
 
             header("Location: ../view/readInfoProfile.php");
+        // If statement unsuccessful, show error message
         } else {
             $_SESSION["error_read"] = "Error. Data not found.";
-
             $this->conn = null;
         }
     }
 
+    // Method to register a new admin user
     public function registerAdmin(): void
     {
         require_once "../controller/utils.php";
@@ -162,27 +176,29 @@ class UserController
         $passwordAdmin = $_POST["password_admin"];
         $userType = "Admin";
     
-        // Validación del email
+        // Email validation
         if (!filter_var($emailAdmin, FILTER_VALIDATE_EMAIL)) {
             $_SESSION["error"] = "Invalid email format";
             header("Location: ../view/loginRegister.php");
             exit();
         }
     
-        // Validación de la contraseña
+        // Password validation
         if (strlen($passwordAdmin) < 5 || !preg_match('/[A-Z]/', $passwordAdmin) || !preg_match('/[0-9]/', $passwordAdmin)) {
             $_SESSION["error"] = "The password does not meet the requirements: minimum 5 characters, 1 uppercase letter and 1 number.";
             header("Location: ../view/loginRegister.php");
             exit();
         }
     
-        // Hash de la contraseña
+        // Hash the password
         $hashed_password = password_hash($passwordAdmin, PASSWORD_DEFAULT);
     
-        // Manejo de la imagen subida
+        // Handle the uploaded image
         $image = $imageUploader->imgUpload('img_admin');
     
+        // If image uploaded successfully
         if ($image) {
+            // Set statement
             try {
                 $stmt = $this->conn->prepare("INSERT INTO Usuario (nombre, email, contraseña, imagen, tipo_usuario) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bindParam(1, $nameAdmin);
@@ -192,6 +208,7 @@ class UserController
                 $stmt->bindParam(5, $userType);
     
                 if ($stmt->execute()) {
+                    // If statement successful, save data in session
                     $idUsuario = $this->conn->lastInsertId();
                     $_SESSION["message"] = "Admin registered successfully!";
                     $_SESSION["logged"] = true;
@@ -201,27 +218,28 @@ class UserController
                     $_SESSION["imagen"] = $image;
                     $_SESSION["user_type"] = $userType;
                     $_SESSION["id_user"] = $idUsuario;
+                    
                     $stmt->closeCursor();
-    
                     $this->conn = null;
-    
                     header("Location: ../view/mainPage.php");
                     exit();
                 } else {
                     $_SESSION["error"] = "Error registering admin. Please try again.";
                     header("Location: ../view/loginRegister.php");
                 }
+            // Error on statement or connection
             } catch (PDOException $e) {
                 $_SESSION["error"] = "Database error: " . $e->getMessage();
                 header("Location: ../view/loginRegister.php");
             }
+        // If image uploaded unsuccessfully
         } else {
             $_SESSION["error"] = "No image uploaded or error uploading image.";
             header("Location: ../view/loginRegister.php");
         }
     }
     
-    
+    // Method to register a new standard user
     public function registerUser(): void
     {
         $userName = $_POST["name_user"];
@@ -229,20 +247,24 @@ class UserController
         $passwordUser = $_POST["password_user"];
         $userType = "Estandar";
 
+        // Email validation
         if (!filter_var($emailUser, FILTER_VALIDATE_EMAIL)) {
             $_SESSION["error"] = "Invalid email format";
             header("Location: ../view/loginRegister.php");
             exit();
         }
 
+        // Password validation
         if (strlen($passwordUser) < 8 || !preg_match('/[A-Z]/', $passwordUser) || !preg_match('/[0-9]/', $passwordUser)) {
             $_SESSION["error"] = "The password does not meet the requirements: minimum 8 characters, 1 uppercase letter and 1 number.";
             header("Location: ../view/loginRegister.php");
             exit();
         }
 
+        // Hash the password
         $hashed_password = password_hash($passwordUser, PASSWORD_DEFAULT);
 
+        // Set statement
         try {
             $stmt = $this->conn->prepare("INSERT INTO Usuario (nombre, email, contraseña, tipo_usuario) VALUES (?, ?, ?, ?)");
             $stmt->bindParam(1, $userName);
@@ -250,6 +272,7 @@ class UserController
             $stmt->bindParam(3, $hashed_password);
             $stmt->bindParam(4, $userType);
 
+            // If statement successful, save data in session
             if ($stmt->execute()) {
                 $idUsuario = $this->conn->lastInsertId();
                 $_SESSION["message"] = "User registered successfully!";
@@ -261,34 +284,36 @@ class UserController
                 $_SESSION["id_user"] = $idUsuario;
 
                 $stmt->closeCursor();
-
                 $this->conn = null;
-
                 header("Location: ../view/mainPage.php");
                 exit();
+            // If statement unsuccessful, refresh page
             } else {
                 $_SESSION["error"] = "Error registering user. Please try again.";
                 header("Location: ../view/loginRegister.php");
             }
+        // Error on statement or connection
         } catch (PDOException $e) {
             $_SESSION["error"] = "Database error: " . $e->getMessage();
             header("Location: ../view/loginRegister.php");
         }
     }
 
+    // Method to update a user's profile
     public function updateProfile(): void
     {
-
         require_once "../controller/utils.php";
         $imageUploader = new ImageUploader();
 
         $username = $_SESSION["id_user"];
         
+        // Get previous data
         $stmt = $this->conn->prepare("SELECT nombre, apellido1, apellido2, contraseña, email, tarjeta_credito, imagen FROM Usuario WHERE id_usuario=?");
         $stmt->bindParam(1, $username);
         $stmt->execute();
         $currentData = $stmt->fetch(PDO::FETCH_ASSOC);
         
+        // Get data from form or, if input is empty, from previous data from database
         if ($currentData) {
             if (!empty($_POST["userName"])) {
                 $_SESSION['user'] = $_POST["userName"];
@@ -333,6 +358,7 @@ class UserController
             }
         }
 
+        // Set statement
         try {
             $stmt = $this->conn->prepare("UPDATE Usuario SET nombre=?, apellido1=?, apellido2=?, contraseña=?, email=?, tarjeta_credito=?, imagen=? WHERE nombre=?");
             $stmt->bindParam(1, $_SESSION['user']);
@@ -355,11 +381,12 @@ class UserController
         }
     }
 
+    // Method to update a user's profile with AJAX
     public function updateProfileAjax(): void {
         require_once "../controller/utils.php";
         $imageUploader = new ImageUploader();
 
-        // Obtener los datos enviados a través de POST
+        // Get data sent with POST
         $userName = $_POST['userName'];
         $ape1 = $_POST['ape1'];
         $ape2 = $_POST['ape2'];
@@ -373,8 +400,7 @@ class UserController
             $imagen = "";
         }
 
-        var_dump($imagen);
-        // Preparar la consulta SQL para actualizar los datos
+        // Set statement
         $stmt = $this->conn->prepare("UPDATE Usuario SET nombre=?, apellido1=?, apellido2=?, contraseña=?, email=?, tarjeta_credito=?, imagen=? WHERE id_usuario=?");
         $stmt->bindParam(1, $userName);
         $stmt->bindParam(2, $ape1);
@@ -384,12 +410,11 @@ class UserController
         $stmt->bindParam(6, $tarjeta_credito);
         $stmt->bindParam(7, $imagen);
         $stmt->bindParam(8, $_SESSION["id_user"]);
-
-        // Ejecutar la consulta y verificar si se realizó alguna actualización
         $stmt->execute();
 
+        // If statement successful, save data in session
         if ($stmt->rowCount() > 0) {
-            echo json_encode(['success' => true, 'message' => 'Datos actualizados correctamente.']);
+            echo json_encode(['success' => true, 'message' => 'Data updated successfully.']);
             $_SESSION['userName'] = $userName;
             $_SESSION['ape1'] = $ape1;
             $_SESSION['ape2'] = $ape2;
@@ -397,8 +422,9 @@ class UserController
             $_SESSION['email'] = $email;
             $_SESSION['tarjeta_credito'] = $tarjeta_credito;
             $_SESSION['imagen'] = $imagen;
+        // If statement unsuccessful, send error message
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+            echo json_encode(['success' => false, 'message' => 'No changes were made.']);
         }
     }
 }
