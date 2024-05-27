@@ -400,7 +400,7 @@ class LugaresController
         
         // If statement successful, save data in session
         if ($stmt->rowCount() > 0) {
-            echo json_encode(['success' => true, 'message' => 'Datos actualizados correctamente.']);
+            echo json_encode(['success' => true, 'message' => 'Data updated successfully.']);
             $_SESSION['nombre'] = $nombre;
             $_SESSION['localizacion'] = $localizacion;
             $_SESSION['tipologia'] = $tipologia;
@@ -418,7 +418,7 @@ class LugaresController
             $_SESSION['imagen_secundaria3'] = $imagen_secundaria3;
         // If statement unsuccessful, send error message
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+            echo json_encode(['success' => false, 'message' => 'No changes were made.']);
         }
     }
 }

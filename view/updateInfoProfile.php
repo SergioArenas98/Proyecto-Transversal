@@ -50,7 +50,7 @@ if (isset($_SESSION['error'])) {
     <div id="div-img-profile">
       <div class="logo">
         <?php if (isset($_SESSION['user']) && $_SESSION['user_type'] === 'Admin') : ?>
-          <img id="img_profile" src="<?php echo $_SESSION["imagen"]; ?>">
+          <img id="img-profile" src="<?php echo $_SESSION["imagen"]; ?>">
         <?php elseif (!isset($_SESSION['user']) && $_SESSION['user_type'] === 'Admin') : ?>
           <p>Image not found</p>
         <?php endif; ?>
